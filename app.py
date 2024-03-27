@@ -1,5 +1,5 @@
 import streamlit as st
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from streamlit_chat import message
 from langchain.chains import ConversationalRetrievalChain, RetrievalQA
 
@@ -18,8 +18,9 @@ from langchain_openai import ChatOpenAI
 import os
 import tempfile
 
-load_dotenv()
-
+#load_dotenv()
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 def generate_suggestive_questions(vector_store):
     """
     This function creates a separate LLMChain specifically for suggesting questions.
