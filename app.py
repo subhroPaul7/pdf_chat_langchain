@@ -21,6 +21,7 @@ import tempfile
 #load_dotenv()
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
+
 def generate_suggestive_questions(vector_store):
     """
     This function creates a separate LLMChain specifically for suggesting questions.
@@ -106,7 +107,7 @@ def display_chat_history(chain1, chain2):
             st.session_state['generated'].append(output)
 
             # Generate suggestive questions based on the last query
-            suggestive_questions = chain2.run(f"Question: {user_input}")
+            suggestive_questions = chain2.run({"query": user_input})
             if suggestive_questions:
                 st.write("Here are some follow-up questions you might be interested in:")
                 for question in suggestive_questions.strip().splitlines():
