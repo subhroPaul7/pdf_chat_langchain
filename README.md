@@ -1,4 +1,4 @@
-# PDF ChatBot:books:
+# PDF ChatBot :books:
 
 This readme file describes the PDF ChatBot, a Streamlit application that allows users to chat with a large language model (LLM) about the contents of a PDF document.
 
