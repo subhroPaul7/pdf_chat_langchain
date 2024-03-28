@@ -1,9 +1,9 @@
 langchain 
 python-dotenv 
 streamlit 
-streamlit_chat 
-langchain_community 
-langchain_openai
+streamlit-chat 
+langchain-community 
+langchain-openai
 pypdf
 sentence-transformers
 faiss-cpu
