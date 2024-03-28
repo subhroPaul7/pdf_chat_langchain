@@ -1,29 +1,23 @@
 import streamlit as st
 #from dotenv import load_dotenv
-import numpy as np
+#import numpy as np
 from streamlit_chat import message
 from langchain.chains import ConversationalRetrievalChain, RetrievalQA
-import spacy
+#import spacy
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.llms import CTransformers
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain.prompts.chat import (
-        ChatPromptTemplate,
-        SystemMessagePromptTemplate,
-        HumanMessagePromptTemplate,
-    )
 from langchain.memory import ConversationBufferMemory
 from langchain_openai import ChatOpenAI
 import os
 import tempfile
-import en_core_web_sm
+#import en_core_web_sm
 
 #load_dotenv()
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
-nlp= en_core_web_sm.load()
+
 
 def generate_suggestive_questions(vector_store):
     """
@@ -33,27 +27,15 @@ def generate_suggestive_questions(vector_store):
         vector_store: The vector store containing document embeddings (optional).
 
     Returns:
-        LLMChain: The chain object for question suggestion.
+        RetrievalQAChain: The chain object for question suggestion.
     """
-    template = """You are an expert question generator. 
-        You will be given a question. 
-        Based on that, generate 3 short questions within 7 words which act as follow up to that question.
-        Give me output as 3 bullets:
-        - Question 1
-        - Question 2
-        - Question 3"""
-    system_message_prompt = SystemMessagePromptTemplate.from_template(template)
-    human_template ="{context}"
-    human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
 
-    chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
     llm  = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0.2, max_tokens=128)
     retriever = vector_store.as_retriever(score_threshold=0.7)
     chain = RetrievalQA.from_chain_type(llm=llm,
                                         chain_type="stuff",
                                         retriever=retriever,
-                                        input_key="query",
-                                        chain_type_kwargs={"prompt": chat_prompt})
+                                        input_key="query")
     return chain
 
 def suggest(query, chain, history):
@@ -93,7 +75,7 @@ def initialize_session_state():
     if 'past' not in st.session_state:
         st.session_state['past'] = ["Hey! 👋"]
 
-def display_chat_history(chain1, chain2, pages):
+def display_chat_history(chain1, chain2):
     reply_container = st.container()
     container = st.container()
 
@@ -106,17 +88,18 @@ def display_chat_history(chain1, chain2, pages):
             sims =[]
             with st.spinner('Generating response...'):
                 output = conversation_chat(user_input, chain1, st.session_state['history'])
-                for page in pages:
-                    doc1 = nlp(output)
-                    doc2 = nlp(page.page_content)
-                    sims.append(doc2.similarity(doc1))
-                num = np.argmax(sims)+1
 
             st.session_state['past'].append(user_input)
-            st.session_state['generated'].append(f"{output} \n \nFrom page:{num}")
+            st.session_state['generated'].append(output)
 
             # Generate suggestive questions based on the last query
-            suggestive_questions = chain2.run({"query": user_input})
+            suggestive_questions = chain2.run({"query": f"""Question: {user_input}. \nYou are an expert question generator. 
+        Based on the given question, generate 3 short follow up-questions within 7 words. 
+        The questions should be mutually exclusive.
+        Give me output as 3 bullets:
+        - Question 1
+        - Question 2
+        - Question 3"""})
             if suggestive_questions:
                 st.write("Here are some follow-up questions you might be interested in:")
                 for question in suggestive_questions.strip().splitlines():
@@ -150,7 +133,6 @@ def main():
             loader = None
             if file_extension == ".pdf":
                 loader = PyPDFLoader(temp_file_path)
-                pages = loader.load()
 
             if loader:
                 text.extend(loader.load())
@@ -170,7 +152,7 @@ def main():
         chain1 = create_conversational_chain(vector_store)
         chain2 = generate_suggestive_questions(vector_store)
         
-        display_chat_history(chain1, chain2, pages)
+        display_chat_history(chain1, chain2)
 
 if __name__ == "__main__":
     main()
