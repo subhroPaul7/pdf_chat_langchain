@@ -18,6 +18,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain_openai import ChatOpenAI
 import os
 import tempfile
+import en_core_web_sm
 
 #load_dotenv()
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
