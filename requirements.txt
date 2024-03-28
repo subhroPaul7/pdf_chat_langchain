@@ -9,4 +9,3 @@ sentence-transformers
 faiss-cpu
 spacy
 numpy
-en-core-web-sm
