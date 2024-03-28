@@ -22,7 +22,7 @@ import tempfile
 #load_dotenv()
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
-nlp = spacy.load("en_core_web_sm")
+nlp= en_core_web_sm.load()
 
 def generate_suggestive_questions(vector_store):
     """
