@@ -23,6 +23,7 @@ import tempfile
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 nlp = spacy.load("en_core_web_sm")
+
 def generate_suggestive_questions(vector_store):
     """
     This function creates a separate LLMChain specifically for suggesting questions.
