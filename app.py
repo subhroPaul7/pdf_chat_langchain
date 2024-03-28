@@ -1,8 +1,9 @@
 import streamlit as st
 #from dotenv import load_dotenv
+import numpy as np
 from streamlit_chat import message
 from langchain.chains import ConversationalRetrievalChain, RetrievalQA
-
+import spacy
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.llms import CTransformers
@@ -21,7 +22,7 @@ import tempfile
 #load_dotenv()
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
-
+nlp = spacy.load("en_core_web_sm")
 def generate_suggestive_questions(vector_store):
     """
     This function creates a separate LLMChain specifically for suggesting questions.
@@ -90,7 +91,7 @@ def initialize_session_state():
     if 'past' not in st.session_state:
         st.session_state['past'] = ["Hey! 👋"]
 
-def display_chat_history(chain1, chain2):
+def display_chat_history(chain1, chain2, pages):
     reply_container = st.container()
     container = st.container()
 
@@ -100,11 +101,17 @@ def display_chat_history(chain1, chain2):
             submit_button = st.form_submit_button(label='Send ➤')
 
         if submit_button and user_input:
+            sims =[]
             with st.spinner('Generating response...'):
                 output = conversation_chat(user_input, chain1, st.session_state['history'])
+                for page in pages:
+                    doc1 = nlp(output)
+                    doc2 = nlp(page.page_content)
+                    sims.append(doc2.similarity(doc1))
+                num = np.argmax(sims)+1
 
             st.session_state['past'].append(user_input)
-            st.session_state['generated'].append(output)
+            st.session_state['generated'].append(f"{output} \n \nFrom page:{num}")
 
             # Generate suggestive questions based on the last query
             suggestive_questions = chain2.run({"query": user_input})
@@ -141,6 +148,7 @@ def main():
             loader = None
             if file_extension == ".pdf":
                 loader = PyPDFLoader(temp_file_path)
+                pages = loader.load()
 
             if loader:
                 text.extend(loader.load())
@@ -160,7 +168,7 @@ def main():
         chain1 = create_conversational_chain(vector_store)
         chain2 = generate_suggestive_questions(vector_store)
         
-        display_chat_history(chain1, chain2)
+        display_chat_history(chain1, chain2, pages)
 
 if __name__ == "__main__":
     main()
