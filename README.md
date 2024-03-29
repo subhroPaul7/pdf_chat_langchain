@@ -39,3 +39,7 @@ OPENAI_API_KEY=YOUR_OPENAI_API_KEY
 
 * This is a basic example and can be extended to include additional features such as document summarization and highlighting relevant passages in the PDF.
 * The application currently uses the OpenAI API for the LLM. You can replace this with a different LLM provider if desired.
+
+## Live link
+
+https://pdf-chat-langchain.streamlit.app/
