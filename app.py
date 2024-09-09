@@ -30,7 +30,7 @@ def generate_suggestive_questions(vector_store):
         RetrievalQAChain: The chain object for question suggestion.
     """
 
-    llm  = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0.2, max_tokens=128)
+    llm  = ChatGroq(model="llama3-8b-8192", temperature=0.2)
     retriever = vector_store.as_retriever(score_threshold=0.7)
     chain = RetrievalQA.from_chain_type(llm=llm,
                                         chain_type="stuff",
