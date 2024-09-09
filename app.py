@@ -92,20 +92,6 @@ def display_chat_history(chain1, chain2):
             st.session_state['past'].append(user_input)
             st.session_state['generated'].append(output)
 
-            # Generate suggestive questions based on the last query
-            suggestive_questions = chain2.run({"query": f"""Question: {user_input}. \nYou are an expert question generator. 
-        Based on the given question, generate 3 short follow up-questions within 7 words. 
-        The questions should be mutually exclusive.
-        Give me output as 3 bullets:
-        - Question 1
-        - Question 2
-        - Question 3"""})
-            if suggestive_questions:
-                st.write("Here are some follow-up questions you might be interested in:")
-                for question in suggestive_questions.strip().splitlines():
-                    st.write(f"{question}")
-            
-
     if st.session_state['generated']:
         with reply_container:
             for i in range(len(st.session_state['generated'])):
