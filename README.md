@@ -26,19 +26,8 @@ This readme file describes the PDF ChatBot, a Streamlit application that allows 
 
 1. Clone the repository containing the application code.
 2. Install the required dependencies using `pip install -r requirements.txt`.
-3. Create a `.env` file in the project directory and set the following environment variable:
+3. Run the application using `streamlit run app.py`.
 
-```
-OPENAI_API_KEY=YOUR_OPENAI_API_KEY
-```
-
-4. Replace `YOUR_OPENAI_API_KEY` with your actual OpenAI API key.
-5. Run the application using `streamlit run app.py`.
-
-## Additional Notes
-
-* This is a basic example and can be extended to include additional features such as document summarization and highlighting relevant passages in the PDF.
-* The application currently uses the OpenAI API for the LLM. You can replace this with a different LLM provider if desired.
 
 ## Live link
 

@@ -9,13 +9,13 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain.memory import ConversationBufferMemory
-from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 import os
 import tempfile
 #import en_core_web_sm
 
 #load_dotenv()
-os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 
 
@@ -44,7 +44,7 @@ def suggest(query, chain, history):
     return result["answer"]
 
 def create_conversational_chain(vector_store):
-    llm  = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0.2)
+    llm  = ChatGroq(model="llama3-8b-8192", temperature=0.2)
     # Create llm
 
     

@@ -3,7 +3,7 @@ python-dotenv
 streamlit 
 streamlit-chat 
 langchain-community 
-langchain-openai
+langchain-groq
 pypdf
 sentence-transformers
 faiss-cpu
